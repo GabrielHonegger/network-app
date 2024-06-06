@@ -1,0 +1,34 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Social Network{% endblock %}</title>
+        <link href="{% static 'network/output.css' %}?{% now "U" %}" rel="stylesheet">
+        {% block script %}
+        {% endblock %}
+    </head>
+    <body>
+        <nav class="bg-slate-100 p-4 flex flex-row gap-7 items-center text-gray-500">
+            <a class="text-lg font-medium text-gray-900" href="#">Network</a>
+            {% if user.is_authenticated %}
+                <a class="nav-link" href="{% url 'profile' user.username %}"><strong>{{ user.username }}</strong></a>
+            {% endif %}
+                <a class="nav-link" href="{% url 'index' %}">All Posts</a>
+            {% if user.is_authenticated %}
+                <a class="nav-link" href="{% url 'following' %}">Following</a>
+                <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+            {% else %}
+                <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                <a class="nav-link" href="{% url 'register' %}">Register</a>
+            {% endif %}
+          </nav>
+
+        <div class="body">
+            {% block body %}
+            {% endblock %}
+        </div>
+    </body>
+</html>
+
+<!-- npx tailwindcss -i ./network/static/network/styles.css -o ./network/static/network/output.css --watch -->

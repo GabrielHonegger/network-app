@@ -1,0 +1,71 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="container p-2 w-9/12 m-auto mt-2">
+        <h2 class="text-3xl">Following</h2>
+        <form action="{% url 'index'%}" method="post" class="d-flex flex-column border border-gray-300 rounded-xl p-5 mt-3">
+            {% csrf_token %}
+            <h4 class="text-xl font-medium mb-3">New Post</h4>
+            <textarea class="border border-gray-400 rounded-lg w-full mb-3 p-2" name="post-content" id="" cols="30" rows="3"></textarea>
+            <div class="text-right">
+                <input class="bg-blue-500 rounded-lg text-white px-4 py-2 cursor-pointer hover:bg-blue-600" type="submit" value="Post">
+            </div>
+        </form>
+        <div>
+            {% for post in page_obj %}
+            <div>
+                <div data-id={{ post.id }} class="post d-flex flex-column border border-gray-300 p-5 mt-3 
+                {% if request.user.is_authenticated %} 
+                    rounded-t-xl border-b-0
+                {% else %}
+                    rounded-xl
+                {% endif %}
+                    ">
+                    <a href="{% url "profile" post.user %}"><h4 class="text-xl font-medium mb-3">{{ post.user }}</h4></a>
+                    {% if request.user == post.user %}
+                        <div class="cursor-pointer text-blue-500 hover:text-blue-600 hover:underline edit" data-url="{% url 'update_post' %}">Edit</div>
+                    {% endif %}
+                    <div class="content">{{ post.content }}</div>
+                    <div class="text-gray-500">{{ post.timestamp }}</div>
+                    <div id="like-{{ post.id }}">{{ post.post_likes.count }} Likes</div>
+                </div>
+                {% if request.user.is_authenticated %}
+                    <div class="bg-gray-200 flex justify-around h-10 items-center rounded-b-xl border border-gray-300">
+                        <div data-url="{% url 'update_like' %}" data-id={{ post.id }} class="like-button flex gap-2 w-full rounded-b-xl justify-center h-full items-center cursor-pointer hover:bg-gray-300 transition">
+                            {% if post.liked %}
+                                <img class="w-5 h-5 mt-[2px]" src="{% static 'network/images/coracao.png' %}" data-image="{% static 'network/images/coracao.png' %}" data-image-src="{% static 'network/images/gostar.png' %}" alt="like">
+                                Unlike</div>
+                            {% else %}
+                                <img class="w-5 h-5 mt-[2px]" src="{% static 'network/images/gostar.png' %}" data-image="{% static 'network/images/coracao.png' %}" data-image-src="{% static 'network/images/gostar.png' %}" alt="like">
+                                Like</div>
+                            {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center" aria-label="Pagination">
+            <div class="pagination flex justify-between mt-8 mb-16">
+                <div class="flex gap-0">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="pl-3 pr-4 font-medium hover:font-normal text-gray-800 border border-gray-500 rounded-md hover:rounded-md hover:bg-gray-200 transition p-2 flex items-center h-10 gap-2">
+                            <img class="w-4 h-4 rotate-180" src="{% static 'network/images/seta.png' %}" alt="left-arrow"> 
+                            PREVIOUS</a>
+                    {% endif %}
+                </div>
+                <div class="flex gap-0">
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="pl-4 pr-3 font-medium hover:font-normal text-gray-800 border border-gray-500 rounded-md hover:rounded-md hover:bg-gray-200 transition p-2 flex items-center h-10 gap-2">
+                            NEXT
+                            <img class="w-4 h-4" src="{% static 'network/images/seta.png' %}" alt="right-arrow"></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/main.js' %}"></script>
+{% endblock %}
