@@ -5,14 +5,16 @@
     {% csrf_token %}
     <div class="container p-2 w-9/12 m-auto mt-2">
         <h2 class="text-3xl">All Posts</h2>
-        <form action="{% url 'index'%}" method="post" class="d-flex flex-column border border-gray-300 rounded-xl p-5 mt-3">
-            {% csrf_token %}
-            <h4 class="text-xl font-medium mb-3">New Post</h4>
-            <textarea class="border border-gray-400 rounded-lg w-full mb-3 p-2" name="post-content" id="" cols="30" rows="3"></textarea>
-            <div class="text-right">
-                <input class="bg-blue-500 rounded-lg text-white px-4 py-2 cursor-pointer hover:bg-blue-600" type="submit" value="Post">
-            </div>
-        </form>
+        {% if request.user.is_authenticated %}
+            <form action="{% url 'index'%}" method="post" class="d-flex flex-column border border-gray-300 rounded-xl p-5 mt-3">
+                {% csrf_token %}
+                <h4 class="text-xl font-medium mb-3">New Post</h4>
+                <textarea class="border border-gray-400 rounded-lg w-full mb-3 p-2" name="post-content" id="" cols="30" rows="3"></textarea>
+                <div class="text-right">
+                    <input class="bg-blue-500 rounded-lg text-white px-4 py-2 cursor-pointer hover:bg-blue-600" type="submit" value="Post">
+                </div>
+            </form>
+        {% endif %}
         <div>
             {% for post in page_obj %}
             <div>
